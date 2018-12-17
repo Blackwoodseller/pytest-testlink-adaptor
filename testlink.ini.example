@@ -1,0 +1,13 @@
+; ini file with testlink-maps section
+[testlink-conf]
+xmlrpc_url=http://<TL_ip>/lib/api/xmlrpc/v1/xmlrpc.php
+api_key=dbfef74333a248110ec6416ca3b58426
+project=Carnival
+testlink_tc_prefix=TC-
+pytest_tc_prefix=TC
+test_plan=$TESTPLAN
+build_name=autobuild
+tester=tester
+
+[testlink-maps]
+TC-514=Test1
