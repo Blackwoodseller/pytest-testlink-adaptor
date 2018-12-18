@@ -7,12 +7,12 @@ long_description = 'pytest-testlink-adaptor is a plugin for ' \
                    'pytest that reports to testlink.' \
                    'It is improved fork of pytest_testlink alpha.'
 
-VERSION = '0.4'
-PYPI_VERSION = '0.4'
+VERSION = '0.32'
+PYPI_VERSION = '0.32'
 
 setup(
     name='pytest-testlink-adaptor',
-    description='improved fork of pytest_testlink alpha',
+    description='pytest reporting plugin for testlink',
     long_description=long_description,
     version=VERSION,
 
@@ -31,7 +31,7 @@ setup(
     install_requires=['pytest>=2.6', 'TestLink-API-Python-client', 'path.py'],
     classifiers=[
         'Environment :: Plugins',
-        'Development Status :: 1 - Beta',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX',

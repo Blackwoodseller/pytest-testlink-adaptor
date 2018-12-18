@@ -314,9 +314,6 @@ def set_build():
         pytest, 'prod_platform', None) or os.environ.get(
             'PROD_PLATFORM') or TLINK.conf.get('prod_platform')
 
-    print('product build: {}'.format(build_name))
-    print('product platform: {}'.format(prod_platform))
-
     if not build_name:
         msg = '!!! no one of pytest prod_vers attribute,' \
               ' environment variable PROD_VERS,' \
@@ -443,15 +440,16 @@ def report_result(test_name, status, duration, build=None, platform=None):
                     testplanid=TLINK.test_plan_id, testcaseexternalid=test_id,
                     version=tc_version, platformid=TLINK.test_platform_id)
 
-            print(TLINK.rpc.reportTCResult(testplanid=TLINK.test_plan_id,
-                                           buildid=build_id,
-                                           platformname=platform_name,
-                                           status=status,
-                                           testcaseexternalid=test_id,
-                                           user=TLINK.conf['tester'],
-                                           execduration='%.2f'
-                                           % round(duration/60, 2)))
-            print(test_id)
+            TLINK.rpc.reportTCResult(testplanid=TLINK.test_plan_id,
+                                     buildid=build_id,
+                                     platformname=platform_name,
+                                     status=status,
+                                     testcaseexternalid=test_id,
+                                     user=TLINK.conf['tester'],
+                                     execduration='%.2f'
+                                     % round(duration/60, 2))
+
+            print('TestLink {tc}: {status}'.format(tc=test_id, status=status))
 
         except TestLinkError as exc:
             print('testlink: WARN: Unable to update'
@@ -459,9 +457,3 @@ def report_result(test_name, status, duration, build=None, platform=None):
             print('testlink: Check if the test case is not linked'
                   ' to test plan!')
             print(exc.message.encode('utf8'))
-
-
-if __name__ == '__main__':
-    testlink_configure(
-        '/media/sf_virt_share/qa_host_tools/pana_git_back/'
-        'host_tools_1121/qa-tools/tests/testlink.ini')
