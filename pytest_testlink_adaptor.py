@@ -314,7 +314,7 @@ def set_build():
 
     build_name = getattr(
         pytest, 'prod_vers', None) or os.environ.get(
-            'PROD_VERS') or TLINK.conf.get('prod_vers')
+            'PROD_VERS') or TLINK.conf.get('build_name')
 
     prod_platform = getattr(
         pytest, 'prod_platform', None) or os.environ.get(
