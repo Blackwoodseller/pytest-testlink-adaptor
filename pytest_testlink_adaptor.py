@@ -16,6 +16,7 @@ import pytest
 
 import testlink
 from testlink import TestLinkError
+import ssl
 
 
 if sys.version_info[0] < 3:
@@ -162,9 +163,14 @@ def init_testlink():
     """Test link initialization"""
     if not TLINK.enabled:
         return
+    # check ignore_unverified_cer option
+    context = None
+    if int(TLINK.conf.get('ignore_unverified_cer')):
+        context = ssl._create_unverified_context()
+        
     # connect to test link
     TLINK.rpc = testlink.TestlinkAPIClient(server_url=TLINK.conf['xmlrpc_url'],
-                                           devKey=TLINK.conf['api_key'])
+                                           devKey=TLINK.conf['api_key'], context=context)
 
     # assert test project exists
     _test_project = TLINK.rpc.getTestProjectByName(TLINK.conf['project'])

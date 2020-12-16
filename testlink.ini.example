@@ -9,5 +9,8 @@ test_plan=$TESTPLAN
 build_name=autobuild
 tester=tester
 
+# 0 - don't ignore; 1 - ignore unverified certificate
+ignore_unverified_cer = 1
+
 [testlink-maps]
 TC-514=Test1
