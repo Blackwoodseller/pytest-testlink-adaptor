@@ -318,7 +318,7 @@ def set_build():
 
     prod_platform = getattr(
         pytest, 'prod_platform', None) or os.environ.get(
-            'PROD_PLATFORM') or TLINK.conf.get('prod_platform')
+            'PROD_PLATFORM') or TLINK.conf.get('prod_platform').lower()
 
     if not build_name:
         msg = '!!! no one of pytest prod_vers attribute,' \
@@ -344,8 +344,11 @@ def set_build():
     # pylint: disable=E1120
     # (unexpected - keyword - arg)
     # pylint: disable=E1123
-    TLINK.testplan_platforms = TLINK.rpc.getTestPlanPlatforms(
-        testplanid=TLINK.test_plan_id)
+    TLINK.testplan_platforms = TLINK.rpc.getTestPlanPlatforms(testplanid=TLINK.test_plan_id)
+
+    # made platform name non case sensitive
+    for platform in TLINK.testplan_platforms:
+        platform["name"] = platform["name"].lower()
 
     # case if we don't have any platforms
     TLINK.test_platform_id = 0
