@@ -167,7 +167,7 @@ def init_testlink():
     context = None
     if int(TLINK.conf.get('ignore_unverified_cer')):
         context = ssl._create_unverified_context()
-        
+
     # connect to test link
     TLINK.rpc = testlink.TestlinkAPIClient(server_url=TLINK.conf['xmlrpc_url'],
                                            devKey=TLINK.conf['api_key'], context=context)
@@ -347,8 +347,11 @@ def set_build():
     TLINK.testplan_platforms = TLINK.rpc.getTestPlanPlatforms(
         testplanid=TLINK.test_plan_id)
 
-    TLINK.test_platform_id = [x['id'] for x in TLINK.testplan_platforms if
-                              x['name'] == TLINK.test_platform][0]
+    # case if we don't have any platforms
+    TLINK.test_platform_id = 0
+    if TLINK.testplan_platforms != []:
+        TLINK.test_platform_id = [x['id'] for x in TLINK.testplan_platforms
+                                  if x['name'] == TLINK.test_platform][0]
 
     # create test build if required
     TLINK.test_build = [tb for tb in
