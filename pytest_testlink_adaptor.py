@@ -281,21 +281,23 @@ def pytest_runtest_logreport(report):
         return
 
     status = ''
+    notes = ''
     if report.passed:
         # ignore setup/teardown
         if report.when == "call":
             status = 'p'
-    elif report.failed:
-        status = 'f'
-    elif report.skipped:
-        status = 'b'
+    else:
+        notes = report.longreprtext
+        if report.failed:
+            status = 'f'
+        elif report.skipped:
+            status = 'b'
     if status:
         if not getattr(TLINK, 'test_build_id'):
             set_build()
 
         test_name = report.nodeid.split('::')[-1]
-        report_result(test_name=test_name, status=status,
-                      duration=report.duration,
+        report_result(test_name=test_name, status=status, notes=notes, duration=report.duration,
                       build=TLINK.test_build_id, platform=TLINK.test_platform)
 
 ###############################################################################
@@ -390,12 +392,13 @@ def testlink_configure(config, exit_on_fail=False):
     init_testlink()
 
 
-def report_result(test_name, status, duration, build=None, platform=None):
+def report_result(test_name, status, notes, duration, build=None, platform=None):
     """
      Stores results in Testlink
     :param test_name:
     :param build:
     :param status: 'p' - passed, 'f' - failed, 'b' - skipped
+    :param notes: detail if case is failed
     :param duration: test duration in seconds
     :param platform: name of platform
     """
@@ -453,6 +456,7 @@ def report_result(test_name, status, duration, build=None, platform=None):
             TLINK.rpc.reportTCResult(testplanid=TLINK.test_plan_id,
                                      buildid=build_id,
                                      platformname=platform_name,
+                                     notes = notes,
                                      status=status,
                                      testcaseexternalid=test_id,
                                      user=TLINK.conf['tester'],
