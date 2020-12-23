@@ -1,16 +1,43 @@
-; ini file with testlink-maps section
 [testlink-conf]
-xmlrpc_url=http://<TL_ip>/lib/api/xmlrpc/v1/xmlrpc.php
-api_key=dbfef74333a248110ec6416ca3b58426
-project=Carnival
-testlink_tc_prefix=TC-
-pytest_tc_prefix=TC
-test_plan=$TESTPLAN
-build_name=autobuild
+
+# Endpoint for testpink API
+xmlrpc_url=https://<TestLink_server>/lib/api/xmlrpc/v1/xmlrpc.php
+
+# user who will be execute tests
 tester=tester
+
+# TestLink secret key
+api_key=0ecefc3d3dd7d97dc03794c970c10422
+
+# TestLink project
+project=EMSG
+
+# Testplan name
+test_plan=pytest_test
+
+# Build name will be create in TestLink if it does not exist
+build_name=autobuild
+
+# Product platform should be exist in TestLink before running
+prod_platform=Firefox
+
+# Prefix for test cases in TestLink
+testlink_tc_prefix=EMSG-
 
 # 0 - don't ignore; 1 - ignore unverified certificate
 ignore_unverified_cer = 1
 
+# prefix for tests in pytest
+pytest_tc_prefix=TC
+
+
 [testlink-maps]
-TC-514=Test1
+# This section is create map for testcases and methods
+
+# Simple test
+# <Test_link_case> = <pytest_method_name>
+EMSG-292=test_2
+
+# Test with parametrization
+# <Test_link_case> = <pytest_method_name>[parameter_name]
+EMSG-113=test_1[expected_code_200]

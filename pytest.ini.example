@@ -1,2 +1,3 @@
 [pytest]
+# the best way will be specify absolute path to testlink.ini
 testlink_file=testlink.ini
