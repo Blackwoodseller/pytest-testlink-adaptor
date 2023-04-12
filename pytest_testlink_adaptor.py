@@ -12,6 +12,8 @@ import re
 from collections import defaultdict
 
 from path import Path
+from pathlib import Path as pathlib_path
+from datetime import datetime
 import pytest
 
 import testlink
@@ -273,24 +275,39 @@ def pytest_runtest_logreport(report):
     """
     if not TLINK.enabled:
         return
-
+    
+    notes = ""
     status = ''
     if report.passed:
         # ignore setup/teardown
         if report.when == "call":
             status = 'p'
+            notes = "Test case passed with logs: \n\n"
     elif report.failed:
         status = 'f'
+        notes = "Test case failed with logs: \n\n"
     elif report.skipped:
         status = 'b'
+        notes = "Test case skipped with logs: \n\n"
     if status:
         if not getattr(TLINK, 'test_build_id'):
             set_build()
 
+        keyword = 'notes::'
+        BASE_DIR = TLINK.conf.get('log_file')
+        filename = f"{BASE_DIR}/{datetime.now().date()}.log"
+        with open(filename, 'r') as file:
+            lines = file.readlines()
+
+        for i, line in enumerate(lines):
+            if keyword in line:
+                note = line.split('::')[-1]
+                notes += f"{note}\n"
+                
         test_name = report.nodeid.split('::')[-1]
         report_result(test_name=test_name, status=status,
                       duration=report.duration,
-                      build=TLINK.test_build_id, platform=TLINK.test_platform)
+                      build=TLINK.test_build_id, platform=TLINK.test_platform, notes=notes)
 
 ###############################################################################
 # common tools
@@ -380,7 +397,7 @@ def testlink_configure(config, exit_on_fail=False):
     init_testlink()
 
 
-def report_result(test_name, status, duration, build=None, platform=None):
+def report_result(test_name, status, duration, build=None, platform=None, notes=None):
     """
      Stores results in Testlink
     :param test_name:
@@ -440,16 +457,18 @@ def report_result(test_name, status, duration, build=None, platform=None):
                     testplanid=TLINK.test_plan_id, testcaseexternalid=test_id,
                     version=tc_version, platformid=TLINK.test_platform_id)
 
-            TLINK.rpc.reportTCResult(testplanid=TLINK.test_plan_id,
-                                     buildid=build_id,
-                                     platformname=platform_name,
-                                     status=status,
-                                     testcaseexternalid=test_id,
-                                     user=TLINK.conf['tester'],
-                                     execduration='%.2f'
-                                     % round(duration/60, 2))
-
-            print('TestLink {tc}: {status}'.format(tc=test_id, status=status))
+            print(TLINK.rpc.reportTCResult(testplanid=TLINK.test_plan_id,
+                                           buildid=build_id,
+                                           platformname=platform_name,
+                                           status=status,
+                                           testcaseexternalid=test_id,
+                                           user=TLINK.conf['tester'],
+                                           execduration='%.2f'
+                                           % round(duration/60, 2),
+                                           notes=notes)
+            )
+                                           
+            print(test_id)
 
         except TestLinkError as exc:
             print('testlink: WARN: Unable to update'
@@ -457,3 +476,9 @@ def report_result(test_name, status, duration, build=None, platform=None):
             print('testlink: Check if the test case is not linked'
                   ' to test plan!')
             print(exc.message.encode('utf8'))
+
+
+if __name__ == '__main__':
+    testlink_configure(
+        '/media/sf_virt_share/qa_host_tools/pana_git_back/'
+        'host_tools_1121/qa-tools/tests/testlink.ini')
