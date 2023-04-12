@@ -43,6 +43,10 @@ Every parameter value can be hardcoded or defined via environment variable
     # can be set via plugin parameter, pytest attribute or environment variable
     prod_platform=$PROD_PLATFORM
 
+    # log_file - path to the log file
+    # to log use this pattern notes::your log
+    log_file=path/to/logfile.log
+
 
     [testlink-maps]
     <testlink_internal_tc_id>=<test_file>::<test_class>::()::<testcase_method>

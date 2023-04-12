@@ -8,6 +8,8 @@ pytest_tc_prefix=TC
 test_plan=$TESTPLAN
 build_name=autobuild
 tester=tester
+; make sure that the file is in write mode so that the notes don't get duplicated in every test case
+log_file=/path/to/log.log
 
 [testlink-maps]
 TC-514=Test1
